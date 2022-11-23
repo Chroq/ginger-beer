@@ -3,7 +3,9 @@
 ## Boilerplate generation
 
 This tool uses a model struct file as input and build :
-- an OpenAPI 3.0 specification contract
+- an OpenAPI 3.0 specification contract in format :
+  - JSON 
+  - YAML 
 - choice of :  
   - a `clean` architecture repository and file structure
       - a controller
@@ -15,7 +17,7 @@ This tool uses a model struct file as input and build :
 
 ## Usage
 
-Display the help :
+### Display the help :
 
 ```bash
 $ ginger-beer -h
@@ -25,11 +27,14 @@ $ ginger-beer -h
     -o string
       Path to the output directory (default ".")
     -t string
-      Type of boilerplate to generate (default "clean")
+      Type of boilerplate to generate (default "basic")
+    -format string
+      Format of the OpenAPI 3.0 specification (default "json")
+    -v    Display version
 ```
 
-Generate your boilerplate :
+### Generate your boilerplate :
 
 ```bash
-$ ginger-beer -f model.go -o ./output -t clean
+$ ginger-beer -f model.go -o ./output -t clean -format yaml
 ```
