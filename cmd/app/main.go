@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"go-openapi_builder/internal/app/adapter"
 )
 
 func main() {
-	adapter.NewGenerator().Build()
+	err := adapter.NewGenerator().Build()
+	if err != nil {
+		fmt.Printf("error: %s", err)
+	}
 }
