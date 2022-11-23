@@ -15,7 +15,9 @@ func TestGeneratorBuild(t *testing.T) {
 }
 
 func TestGeneratorNewGenerator(t *testing.T) {
-	td.Cmp(t, cli.NewGenerator(), &cli.Generator{
+	generator, err := cli.NewGenerator()
+	td.Cmp(t, err, nil)
+	td.Cmp(t, generator, &cli.Generator{
 		Config: &service.Config{
 			File:   "model.go",
 			Output: ".",

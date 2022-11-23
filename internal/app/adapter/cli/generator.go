@@ -8,10 +8,15 @@ type Generator struct {
 }
 
 // NewGenerator creates a new instance of the Generator
-func NewGenerator() *Generator {
-	return &Generator{
-		Config: service.NewConfig(),
+func NewGenerator() (*Generator, error) {
+	config, err := service.NewConfig()
+	if err != nil {
+		return nil, err
 	}
+
+	return &Generator{
+		Config: config,
+	}, nil
 }
 
 // Build executes the application

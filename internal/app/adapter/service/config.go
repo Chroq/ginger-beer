@@ -1,20 +1,30 @@
 package service
 
 import (
+	"fmt"
 	"os"
+	"strings"
 )
 
 const (
-	DefaultFile   = "model.go"
-	DefaultOutput = "."
-	DefaultType   = "basic"
-	DefaultFormat = "json"
-	ParamFile     = "-f"
-	ParamOutput   = "-o"
-	ParamType     = "-t"
-	ParamFormat   = "-format"
-	ParamVersion  = "-v"
-	Version       = "0.0.1"
+	PermittedFormatJSON         = "json"
+	PermittedFormatYAML         = "yaml"
+	PermittedTypeBasic          = "basic"
+	PermittedTypeClean          = "clean"
+	DefaultFile                 = "model.go"
+	DefaultOutput               = "."
+	DefaultType                 = "basic"
+	DefaultFormat               = "json"
+	ErrMessageNotPermittedValue = "%s is not a permitted value for %s. Allowed values : %s"
+	ErrValueSeparator           = ", "
+	NameType                    = "type"
+	NameFormat                  = "format"
+	ParamFile                   = "-f"
+	ParamOutput                 = "-o"
+	ParamType                   = "-t"
+	ParamFormat                 = "-format"
+	ParamVersion                = "-v"
+	Version                     = "0.0.1"
 )
 
 type Config struct {
@@ -25,8 +35,40 @@ type Config struct {
 	Format  string
 }
 
+func (c *Config) Validate() error {
+	if c.Type != PermittedTypeBasic && c.Type != PermittedTypeClean {
+		permittedTypes := strings.Join([]string{PermittedTypeBasic, PermittedTypeClean}, ErrValueSeparator)
+		return fmt.Errorf(ErrMessageNotPermittedValue, c.Type, NameType, permittedTypes)
+	}
+
+	if c.Format != PermittedFormatYAML && c.Format != PermittedFormatJSON {
+		permittedFormats := strings.Join([]string{PermittedFormatJSON, PermittedFormatYAML}, ErrValueSeparator)
+		return fmt.Errorf(ErrMessageNotPermittedValue, c.Format, NameFormat, permittedFormats)
+	}
+
+	if c.Output != "." {
+		if err := os.Mkdir(c.Output, os.ModePerm); err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
 // NewConfig creates a new instance of the Config
-func NewConfig() *Config {
+func NewConfig() (*Config, error) {
+	config := buildConfig()
+
+	if err := config.Validate(); err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+// buildConfig creates a new instance of the Config
+func buildConfig() *Config {
 	config := &Config{
 		File:   DefaultFile,
 		Output: DefaultOutput,
@@ -53,6 +95,5 @@ func NewConfig() *Config {
 			i++
 		}
 	}
-
 	return config
 }

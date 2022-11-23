@@ -6,8 +6,12 @@ import (
 )
 
 func main() {
-	err := cli.NewGenerator().Build()
+	generator, err := cli.NewGenerator()
 	if err != nil {
+		fmt.Printf("error: %s", err)
+	}
+
+	if err := generator.Build(); err != nil {
 		fmt.Printf("error: %s", err)
 	}
 }
