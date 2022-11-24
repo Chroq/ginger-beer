@@ -26,17 +26,36 @@ func TestNewConfig(t *testing.T) {
 				Type:   "basic",
 				Format: "json",
 			},
+			env: func() []string {
+				err := os.WriteFile("./model.go", []byte{}, os.ModePerm)
+				td.CmpNoError(t, err)
+				return []string{"main"}
+			},
+			clean: func() {
+				err := os.Remove("./model.go")
+				td.CmpNoError(t, err)
+			},
 		},
 		{
 			name: "full parameter",
 			want: &Config{
-				File:   "user.go",
+				File:   "testModel.go",
 				Output: "output",
 				Type:   "clean",
 				Format: "yaml",
 			},
 			env: func() []string {
-				return []string{"main", "-f", "user.go", "-o", "output", "-t", "clean", "-format", "yaml"}
+				err := os.WriteFile("./testModel.go", []byte{}, os.ModePerm)
+				td.CmpNoError(t, err)
+				return []string{"main", "-f", "testModel.go", "-o", "output", "-t", "clean", "-format", "yaml"}
+			},
+			clean: func() {
+				err := os.Remove("./testModel.go")
+				td.CmpNoError(t, err)
+
+				if err := os.Remove("./output"); err != nil {
+					td.CmpNoError(t, err)
+				}
 			},
 		},
 		{
