@@ -62,17 +62,6 @@ func (c *Config) Validate() error {
 
 // NewConfig creates a new instance of the Config
 func NewConfig() (*Config, error) {
-	config := buildConfig()
-
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
-
-	return config, nil
-}
-
-// buildConfig creates a new instance of the Config
-func buildConfig() *Config {
 	config := &Config{
 		File:   DefaultFile,
 		Output: DefaultOutput,
@@ -84,20 +73,21 @@ func buildConfig() *Config {
 		switch args[i] {
 		case ParamVersion:
 			config.Version = Version
-			break
+			return config, nil
 		case ParamFile:
 			config.File = args[i+1]
-			i++
 		case ParamOutput:
 			config.Output = args[i+1]
-			i++
 		case ParamType:
 			config.Type = args[i+1]
-			i++
 		case ParamFormat:
 			config.Format = args[i+1]
-			i++
 		}
 	}
-	return config
+
+	if err := config.Validate(); err != nil {
+		return nil, err
+	}
+
+	return config, nil
 }
