@@ -53,6 +53,10 @@ func (c *Config) Validate() error {
 		}
 	}
 
+	if _, err := os.Stat(c.File); os.IsNotExist(err) {
+		return err
+	}
+
 	return nil
 }
 

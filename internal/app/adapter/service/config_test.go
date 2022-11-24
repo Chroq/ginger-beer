@@ -74,12 +74,29 @@ func TestNewConfig(t *testing.T) {
 				Err:  syscall.EEXIST,
 			},
 			env: func() []string {
-				err := os.Mkdir("test", os.ModePerm)
+				err := os.Mkdir("./test", os.ModePerm)
 				td.CmpNoError(t, err)
 				return []string{"main", "-o", "test"}
 			},
 			clean: func() {
-				err := os.Remove("test")
+				err := os.Remove("./test")
+				td.CmpNoError(t, err)
+			},
+		}, {
+			name: "not existing file",
+			err: &fs.PathError{
+				Op:   "stat",
+				Path: "testModel.go",
+				Err:  syscall.Errno(0x2),
+			},
+			env: func() []string {
+				err := os.WriteFile("../../../../testdata/testModel.go", []byte{}, os.ModePerm)
+
+				td.CmpNoError(t, err)
+				return []string{"main", "-f", "testModel.go"}
+			},
+			clean: func() {
+				err := os.Remove("../../../../testdata/testModel.go")
 				td.CmpNoError(t, err)
 			},
 		},
