@@ -8,9 +8,10 @@ import (
 
 const (
 	DefaultConnection           = "postgresql://localhost/postgres"
+	DefaultDriver               = "postgres"
+	DefaultFormat               = "json"
 	DefaultOutput               = "."
 	DefaultType                 = "basic"
-	DefaultFormat               = "json"
 	ErrMessageNotPermittedValue = "%s is not a permitted value for %s. Allowed values : %s"
 	ErrValueSeparator           = ", "
 	NameType                    = "type"
@@ -29,6 +30,7 @@ const (
 
 type Config struct {
 	Connection string
+	Driver     string
 	File       string
 	Format     string
 	Output     string
@@ -67,6 +69,7 @@ func (c *Config) Validate() error {
 func NewConfig() (*Config, error) {
 	config := &Config{
 		Output:     DefaultOutput,
+		Driver:     DefaultDriver,
 		Type:       DefaultType,
 		Format:     DefaultFormat,
 		Connection: DefaultConnection,
