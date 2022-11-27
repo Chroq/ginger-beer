@@ -20,11 +20,14 @@ func TestGeneratorNewGenerator(t *testing.T) {
 
 	generator, err := cli.NewGenerator()
 	td.Cmp(t, err, nil)
+
 	td.Cmp(t, generator, &cli.Generator{
+		DB: generator.DB,
 		Config: &service.Config{
 			Connection: "postgresql://localhost/postgres",
 			Output:     "../../../../testdata/output",
 			Type:       "clean",
+			Driver:     "postgres",
 			Format:     "yaml",
 		},
 	})

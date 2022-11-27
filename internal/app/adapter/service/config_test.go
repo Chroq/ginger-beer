@@ -23,6 +23,7 @@ func TestNewConfig(t *testing.T) {
 			name: "default",
 			want: &Config{
 				Connection: "postgresql://localhost/postgres",
+				Driver:     "postgres",
 				Output:     ".",
 				Type:       "basic",
 				Format:     "json",
@@ -35,6 +36,7 @@ func TestNewConfig(t *testing.T) {
 			name: "full parameter",
 			want: &Config{
 				Connection: "postgresql://localhost/postgres",
+				Driver:     "postgres",
 				Output:     "output",
 				Type:       "clean",
 				Format:     "yaml",
@@ -51,11 +53,12 @@ func TestNewConfig(t *testing.T) {
 		{
 			name: "only version",
 			want: &Config{
-				Version:    "0.0.1",
 				Connection: "postgresql://localhost/postgres",
+				Driver:     "postgres",
 				Output:     ".",
 				Type:       "basic",
 				Format:     "json",
+				Version:    "0.0.1",
 			},
 			env: func() []string {
 				return []string{"main", "-v"}
