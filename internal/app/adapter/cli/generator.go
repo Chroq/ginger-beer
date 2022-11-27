@@ -2,7 +2,7 @@ package cli
 
 import (
 	"database/sql"
-	"fmt"
+	"go-openapi_builder/internal/app/adapter/repository"
 	"go-openapi_builder/internal/app/adapter/service"
 
 	_ "github.com/lib/pq"
@@ -10,8 +10,8 @@ import (
 
 // Generator is the entry point for the cli application
 type Generator struct {
-	Config *service.Config
-	DB     *sql.DB
+	Config        *service.Config
+	SqlRepository *repository.SqlRepository
 }
 
 // NewGenerator creates a new instance of the Generator
@@ -25,21 +25,21 @@ func NewGenerator() (*Generator, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			fmt.Printf("error: %s", err)
-		}
-	}(db)
 
 	return &Generator{
 		Config: config,
-		DB:     db,
+		SqlRepository: &repository.SqlRepository{
+			DB: db,
+		},
 	}, nil
 }
 
 // Build executes the application
 func (g *Generator) Build() error {
+	_, err := g.SqlRepository.GetTableNames()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
