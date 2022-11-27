@@ -16,16 +16,16 @@ func TestGeneratorBuild(t *testing.T) {
 }
 
 func TestGeneratorNewGenerator(t *testing.T) {
-	os.Args = []string{"main", "-f", "../../../../testdata/model.go", "-o", "../../../../testdata/output", "-t", "clean", "-format", "yaml"}
+	os.Args = []string{"main", "-c", "postgresql://localhost/postgres", "-o", "../../../../testdata/output", "-t", "clean", "-f", "yaml"}
 
 	generator, err := cli.NewGenerator()
 	td.Cmp(t, err, nil)
 	td.Cmp(t, generator, &cli.Generator{
 		Config: &service.Config{
-			File:   "../../../../testdata/model.go",
-			Output: "../../../../testdata/output",
-			Type:   "clean",
-			Format: "yaml",
+			Connection: "postgresql://localhost/postgres",
+			Output:     "../../../../testdata/output",
+			Type:       "clean",
+			Format:     "yaml",
 		},
 	})
 

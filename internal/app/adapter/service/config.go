@@ -7,10 +7,7 @@ import (
 )
 
 const (
-	PermittedFormatJSON         = "json"
-	PermittedFormatYAML         = "yaml"
-	PermittedTypeBasic          = "basic"
-	PermittedTypeClean          = "clean"
+	DefaultConnection           = "postgresql://localhost/postgres"
 	DefaultOutput               = "."
 	DefaultType                 = "basic"
 	DefaultFormat               = "json"
@@ -18,19 +15,25 @@ const (
 	ErrValueSeparator           = ", "
 	NameType                    = "type"
 	NameFormat                  = "format"
+	ParamConnection             = "-c"
 	ParamFormat                 = "-f"
 	ParamOutput                 = "-o"
 	ParamType                   = "-t"
 	ParamVersion                = "-v"
+	PermittedFormatJSON         = "json"
+	PermittedFormatYAML         = "yaml"
+	PermittedTypeBasic          = "basic"
+	PermittedTypeClean          = "clean"
 	Version                     = "0.0.1"
 )
 
 type Config struct {
-	Version string
-	File    string
-	Output  string
-	Type    string
-	Format  string
+	Connection string
+	File       string
+	Format     string
+	Output     string
+	Type       string
+	Version    string
 }
 
 func (c *Config) Validate() error {
@@ -51,8 +54,10 @@ func (c *Config) Validate() error {
 		}
 	}
 
-	if _, err := os.Stat(c.File); os.IsNotExist(err) {
-		return err
+	if c.Connection != DefaultConnection {
+		if !strings.HasPrefix(c.Connection, "postgresql://") {
+			return fmt.Errorf("connection must be a postgresql connection")
+		}
 	}
 
 	return nil
@@ -61,9 +66,10 @@ func (c *Config) Validate() error {
 // NewConfig creates a new instance of the Config
 func NewConfig() (*Config, error) {
 	config := &Config{
-		Output: DefaultOutput,
-		Type:   DefaultType,
-		Format: DefaultFormat,
+		Output:     DefaultOutput,
+		Type:       DefaultType,
+		Format:     DefaultFormat,
+		Connection: DefaultConnection,
 	}
 	args := os.Args[1:]
 	for i := range args {
@@ -73,6 +79,8 @@ func NewConfig() (*Config, error) {
 			return config, nil
 		case ParamFormat:
 			config.Format = args[i+1]
+		case ParamConnection:
+			config.Connection = args[i+1]
 		case ParamOutput:
 			config.Output = args[i+1]
 		case ParamType:

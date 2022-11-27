@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -21,38 +22,27 @@ func TestNewConfig(t *testing.T) {
 		{
 			name: "default",
 			want: &Config{
-				File:   "model.go",
-				Output: ".",
-				Type:   "basic",
-				Format: "json",
+				Connection: "postgresql://localhost/postgres",
+				Output:     ".",
+				Type:       "basic",
+				Format:     "json",
 			},
 			env: func() []string {
-				err := os.WriteFile("./model.go", []byte{}, os.ModePerm)
-				td.CmpNoError(t, err)
 				return []string{"main"}
-			},
-			clean: func() {
-				err := os.Remove("./model.go")
-				td.CmpNoError(t, err)
 			},
 		},
 		{
 			name: "full parameter",
 			want: &Config{
-				File:   "testModel.go",
-				Output: "output",
-				Type:   "clean",
-				Format: "yaml",
+				Connection: "postgresql://localhost/postgres",
+				Output:     "output",
+				Type:       "clean",
+				Format:     "yaml",
 			},
 			env: func() []string {
-				err := os.WriteFile("./testModel.go", []byte{}, os.ModePerm)
-				td.CmpNoError(t, err)
-				return []string{"main", "-f", "testModel.go", "-o", "output", "-t", "clean", "-format", "yaml"}
+				return []string{"main", "-c", "postgresql://localhost/postgres", "-o", "output", "-t", "clean", "-f", "yaml"}
 			},
 			clean: func() {
-				err := os.Remove("./testModel.go")
-				td.CmpNoError(t, err)
-
 				if err := os.Remove("./output"); err != nil {
 					td.CmpNoError(t, err)
 				}
@@ -61,11 +51,11 @@ func TestNewConfig(t *testing.T) {
 		{
 			name: "only version",
 			want: &Config{
-				Version: "0.0.1",
-				File:    "model.go",
-				Output:  ".",
-				Type:    "basic",
-				Format:  "json",
+				Version:    "0.0.1",
+				Connection: "postgresql://localhost/postgres",
+				Output:     ".",
+				Type:       "basic",
+				Format:     "json",
 			},
 			env: func() []string {
 				return []string{"main", "-v"}
@@ -82,7 +72,7 @@ func TestNewConfig(t *testing.T) {
 			name: "wrong format",
 			err:  fmt.Errorf("test is not a permitted value for format. Allowed values : json, yaml"),
 			env: func() []string {
-				return []string{"main", "-format", "test"}
+				return []string{"main", "-f", "test"}
 			},
 		},
 		{
@@ -101,22 +91,12 @@ func TestNewConfig(t *testing.T) {
 				err := os.Remove("./test")
 				td.CmpNoError(t, err)
 			},
-		}, {
-			name: "not existing file",
-			err: &fs.PathError{
-				Op:   "stat",
-				Path: "testModel.go",
-				Err:  syscall.Errno(0x2),
-			},
+		},
+		{
+			name: "incorrectly formatted connection string",
+			err:  errors.New("connection must be a postgresql connection"),
 			env: func() []string {
-				err := os.WriteFile("../../../../testdata/testModel.go", []byte{}, os.ModePerm)
-
-				td.CmpNoError(t, err)
-				return []string{"main", "-f", "testModel.go"}
-			},
-			clean: func() {
-				err := os.Remove("../../../../testdata/testModel.go")
-				td.CmpNoError(t, err)
+				return []string{"main", "-c", "test"}
 			},
 		},
 	}
