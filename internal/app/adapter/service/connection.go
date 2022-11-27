@@ -1,0 +1,10 @@
+package service
+
+// Connection to PostgreSQL database
+type Connection struct {
+	Host     string
+	Port     int
+	User     string
+	Password string
+	Database string
+}

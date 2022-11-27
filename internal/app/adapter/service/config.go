@@ -11,7 +11,6 @@ const (
 	PermittedFormatYAML         = "yaml"
 	PermittedTypeBasic          = "basic"
 	PermittedTypeClean          = "clean"
-	DefaultFile                 = "model.go"
 	DefaultOutput               = "."
 	DefaultType                 = "basic"
 	DefaultFormat               = "json"
@@ -19,10 +18,9 @@ const (
 	ErrValueSeparator           = ", "
 	NameType                    = "type"
 	NameFormat                  = "format"
-	ParamFile                   = "-f"
+	ParamFormat                 = "-f"
 	ParamOutput                 = "-o"
 	ParamType                   = "-t"
-	ParamFormat                 = "-format"
 	ParamVersion                = "-v"
 	Version                     = "0.0.1"
 )
@@ -63,7 +61,6 @@ func (c *Config) Validate() error {
 // NewConfig creates a new instance of the Config
 func NewConfig() (*Config, error) {
 	config := &Config{
-		File:   DefaultFile,
 		Output: DefaultOutput,
 		Type:   DefaultType,
 		Format: DefaultFormat,
@@ -74,14 +71,12 @@ func NewConfig() (*Config, error) {
 		case ParamVersion:
 			config.Version = Version
 			return config, nil
-		case ParamFile:
-			config.File = args[i+1]
+		case ParamFormat:
+			config.Format = args[i+1]
 		case ParamOutput:
 			config.Output = args[i+1]
 		case ParamType:
 			config.Type = args[i+1]
-		case ParamFormat:
-			config.Format = args[i+1]
 		}
 	}
 
