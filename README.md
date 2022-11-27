@@ -31,7 +31,7 @@ You can use any way you want to build your tables (SQL script, database designer
 ### Generate your boilerplate :
 
 ```bash
-$ ginger-beer -c "postgresql://localhost/ginger-beer" -o ./output -f yaml
+$ ginger-beer -c "postgresql://postgres@localhost/ginger-beer?sslmode=disable" -o ./output -f yaml
 ```
 
 -c : database connection string (default : postgresql://localhost/postgres)
