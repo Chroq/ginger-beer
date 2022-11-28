@@ -3,41 +3,36 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	"ginger-beer/internal/app/adapter/factory"
+	"ginger-beer/internal/app/adapter/service"
+	"ginger-beer/internal/app/domain"
 )
 
-type SqlRepository struct {
+type SQLRepository struct {
 	DB *sql.DB
 }
 
-type Table struct {
-	Name   string
-	Fields []Field
-}
-
-type Field struct {
-	Size *int
-	Name string
-	Type string
-}
-
-func (r *SqlRepository) BuildTables() ([]Table, error) {
+func (r *SQLRepository) GetComponent() (*domain.Component, error) {
+	var component domain.Component
 	tables, err := r.getTableNames()
 	if err != nil {
-		return tables, nil
+		return nil, nil
 	}
 
+	component.Schema = make(map[string]domain.Schema, len(tables))
 	for i := range tables {
 		tables[i].Fields, err = r.getFields(tables[i].Name)
 		if err != nil {
-			return tables, nil
+			return nil, nil
 		}
+		component.Schema[tables[i].Name] = factory.BuildSchemaBySQLTable(tables[i])
 	}
 
-	return tables, nil
+	return &component, nil
 }
 
-func (r *SqlRepository) getTableNames() ([]Table, error) {
-	var Tables []Table
+func (r *SQLRepository) getTableNames() ([]service.SQLTable, error) {
+	var Tables []service.SQLTable
 
 	query, err := r.DB.Query(`
 		select table_name 
@@ -55,7 +50,7 @@ func (r *SqlRepository) getTableNames() ([]Table, error) {
 	}(query)
 
 	for query.Next() {
-		var tableName Table
+		var tableName service.SQLTable
 		if err := query.Scan(&tableName.Name); err != nil {
 			return Tables, err
 		}
@@ -68,8 +63,8 @@ func (r *SqlRepository) getTableNames() ([]Table, error) {
 	return Tables, nil
 }
 
-func (r *SqlRepository) getFields(tableName string) ([]Field, error) {
-	var fields []Field
+func (r *SQLRepository) getFields(tableName string) ([]service.SQLField, error) {
+	var fields []service.SQLField
 
 	queryString := fmt.Sprintf(`
 			SELECT column_name, data_type, character_maximum_length
@@ -88,7 +83,7 @@ func (r *SqlRepository) getFields(tableName string) ([]Field, error) {
 	}(query)
 
 	for query.Next() {
-		var field Field
+		var field service.SQLField
 		if err := query.Scan(&field.Name, &field.Type, &field.Size); err != nil {
 			return fields, err
 		}

@@ -1,9 +1,9 @@
 package cli_test
 
 import (
-	"go-openapi_builder/internal/app/adapter/cli"
-	"go-openapi_builder/internal/app/adapter/repository"
-	"go-openapi_builder/internal/app/adapter/service"
+	"ginger-beer/internal/app/adapter/cli"
+	"ginger-beer/internal/app/adapter/repository"
+	"ginger-beer/internal/app/adapter/service"
 	"os"
 	"testing"
 
@@ -17,8 +17,8 @@ func TestGeneratorNewGenerator(t *testing.T) {
 	td.Cmp(t, err, nil)
 
 	td.Cmp(t, generator, &cli.Generator{
-		SqlRepository: &repository.SqlRepository{
-			DB: generator.SqlRepository.DB,
+		SQLRepository: &repository.SQLRepository{
+			DB: generator.SQLRepository.DB,
 		},
 		Config: &service.Config{
 			Connection: "postgresql://localhost/postgres",

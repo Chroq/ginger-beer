@@ -1,4 +1,4 @@
-module go-openapi_builder
+module ginger-beer
 
 go 1.19
 

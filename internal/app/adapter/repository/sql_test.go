@@ -2,8 +2,9 @@ package repository_test
 
 import (
 	"database/sql"
-	"go-openapi_builder/internal/app/adapter/repository"
-	"go-openapi_builder/testdata/tu"
+	"ginger-beer/internal/app/adapter/repository"
+	"ginger-beer/internal/app/domain"
+	"ginger-beer/testdata/tu"
 	"testing"
 
 	_ "github.com/lib/pq"
@@ -17,7 +18,7 @@ func TestSqlRepository_BuildTables(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   []repository.Table
+		want   *domain.Component
 		err    error
 		clean  func()
 	}{
@@ -34,12 +35,11 @@ func TestSqlRepository_BuildTables(t *testing.T) {
 					return db
 				},
 			},
-			want: []repository.Table{
-				{
-					Name: "test",
-					Fields: []repository.Field{
-						{Name: "id", Type: "integer", Size: nil},
-						{Name: "name", Type: "character varying", Size: tu.Ptr(255)},
+			want: &domain.Component{
+				Schema: map[string]domain.Schema{
+					"test": {
+						Type:       "object",
+						Properties: map[string]domain.Property{"id": {Type: "integer"}, "name": {Type: "character varying", MaxLength: tu.Ptr(255)}},
 					},
 				},
 			},
@@ -58,13 +58,13 @@ func TestSqlRepository_BuildTables(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &repository.SqlRepository{
+			r := &repository.SQLRepository{
 				DB: tt.fields.DB(),
 			}
 			defer r.DB.Close()
 			defer tt.clean()
 
-			got, err := r.BuildTables()
+			got, err := r.GetComponent()
 			td.Cmp(t, err, tt.err)
 			td.Cmp(t, got, tt.want)
 		})

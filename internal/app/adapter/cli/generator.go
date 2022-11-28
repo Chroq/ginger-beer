@@ -2,8 +2,8 @@ package cli
 
 import (
 	"database/sql"
-	"go-openapi_builder/internal/app/adapter/repository"
-	"go-openapi_builder/internal/app/adapter/service"
+	"ginger-beer/internal/app/adapter/repository"
+	"ginger-beer/internal/app/adapter/service"
 
 	_ "github.com/lib/pq"
 )
@@ -11,7 +11,7 @@ import (
 // Generator is the entry point for the cli application
 type Generator struct {
 	Config        *service.Config
-	SqlRepository *repository.SqlRepository
+	SQLRepository *repository.SQLRepository
 }
 
 // NewGenerator creates a new instance of the Generator
@@ -28,18 +28,8 @@ func NewGenerator() (*Generator, error) {
 
 	return &Generator{
 		Config: config,
-		SqlRepository: &repository.SqlRepository{
+		SQLRepository: &repository.SQLRepository{
 			DB: db,
 		},
 	}, nil
-}
-
-// Build executes the application
-func (g *Generator) Build() error {
-	_, err := g.SqlRepository.BuildTables()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
