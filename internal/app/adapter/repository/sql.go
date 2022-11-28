@@ -20,7 +20,23 @@ type Field struct {
 	Type string
 }
 
-func (r *SqlRepository) GetTableNames() ([]Table, error) {
+func (r *SqlRepository) BuildTables() ([]Table, error) {
+	tables, err := r.getTableNames()
+	if err != nil {
+		return tables, nil
+	}
+
+	for i := range tables {
+		tables[i].Fields, err = r.getFields(tables[i].Name)
+		if err != nil {
+			return tables, nil
+		}
+	}
+
+	return tables, nil
+}
+
+func (r *SqlRepository) getTableNames() ([]Table, error) {
 	var Tables []Table
 
 	query, err := r.DB.Query(`
@@ -52,7 +68,7 @@ func (r *SqlRepository) GetTableNames() ([]Table, error) {
 	return Tables, nil
 }
 
-func (r *SqlRepository) GetFields(tableName string) ([]Field, error) {
+func (r *SqlRepository) getFields(tableName string) ([]Field, error) {
 	var fields []Field
 
 	queryString := fmt.Sprintf(`

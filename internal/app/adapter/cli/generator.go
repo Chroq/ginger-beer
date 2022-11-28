@@ -36,7 +36,7 @@ func NewGenerator() (*Generator, error) {
 
 // Build executes the application
 func (g *Generator) Build() error {
-	_, err := g.SqlRepository.GetTableNames()
+	_, err := g.SqlRepository.BuildTables()
 	if err != nil {
 		return err
 	}
