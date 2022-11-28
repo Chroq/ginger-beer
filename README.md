@@ -45,8 +45,8 @@ $ ginger-beer -c "postgresql://postgres@localhost/ginger-beer?sslmode=disable" -
 ```bash
 $ ginger-beer -h
    Usage of ginger-beer:
-    -f string
-      Path to the model file (default "model.go")
+    -c string
+        database connection string (default "postgresql://localhost/postgres")
     -o string
       Path to the output directory (default ".")
     -t string
