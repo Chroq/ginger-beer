@@ -2,8 +2,12 @@ package cli
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"ginger-beer/internal/app/adapter/repository"
 	"ginger-beer/internal/app/adapter/service"
+	"ginger-beer/internal/app/application/usecase"
+	"gopkg.in/yaml.v3"
 
 	_ "github.com/lib/pq"
 )
@@ -32,4 +36,28 @@ func NewGenerator() (*Generator, error) {
 			DB: db,
 		},
 	}, nil
+}
+
+// Generate creates a new contract
+func (g *Generator) Generate() error {
+	contractUseCase := usecase.ContractUseCase{
+		ComponentRepository: g.SQLRepository,
+	}
+	if contract, err := contractUseCase.BuildContract(); err == nil {
+		if g.Config.Format == service.PermittedFormatJSON {
+			if marshal, err := json.Marshal(contract); err == nil {
+				fmt.Println(string(marshal))
+			} else {
+				return err
+			}
+		} else if g.Config.Format == service.PermittedFormatYAML {
+			if marshal, err := yaml.Marshal(contract); err == nil {
+				fmt.Println(string(marshal))
+			} else {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

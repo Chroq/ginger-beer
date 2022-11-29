@@ -16,6 +16,7 @@ func (u *ContractUseCase) BuildContract() (*domain.Contract, error) {
 	}
 
 	return &domain.Contract{
+		OpenAPI:   domain.DefaultOpenAPIVersion,
 		Component: *component,
 	}, nil
 }
