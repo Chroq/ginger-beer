@@ -25,7 +25,11 @@ func (r *SQLRepository) GetComponent() (*domain.Component, error) {
 		if err != nil {
 			return nil, nil
 		}
-		component.Schema[tables[i].Name] = factory.BuildSchemaBySQLTable(tables[i])
+		schema, err := factory.BuildSchemaBySQLTable(tables[i])
+		if err != nil {
+			return nil, err
+		}
+		component.Schema[tables[i].Name] = *schema
 	}
 
 	return &component, nil
