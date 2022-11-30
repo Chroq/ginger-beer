@@ -13,7 +13,7 @@ func BuildPathsByEntities(entities, verbs []string) map[string]map[string]domain
 		newURI := "/" + inflector.Pluralize(inflector.Dasherize(entities[i]))
 		paths[newURI] = make(map[string]domain.Path, len(verbs))
 		for j := range verbs {
-			outputSchemaReference := domain.BaseReferenceComponentsSchemas + "output." + inflector.Camelize(entities[i])
+			outputSchemaReference := domain.GetOutputSchemaReference(entities[i])
 			paths[newURI][verbs[j]] = domain.Path{
 				OperationID: verbs[j] + inflector.Camelize(entities[i]),
 				Tags: []string{

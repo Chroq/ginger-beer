@@ -1,7 +1,10 @@
 package domain
 
+import "github.com/tangzero/inflector"
+
 const (
 	BaseReferenceComponentsSchemas = "#/components/schemas/"
+	ReferencePrefixOutput          = "output."
 	SchemaTypeObject               = "object"
 )
 
@@ -12,4 +15,8 @@ type Schema struct {
 	Type        string              `json:"type,omitempty" yaml:"type,omitempty"`
 	Required    []string            `json:"required,omitempty" yaml:"required,omitempty"`
 	Properties  map[string]Property `json:"properties,omitempty" yaml:"properties,omitempty"`
+}
+
+func GetOutputSchemaReference(name string) string {
+	return BaseReferenceComponentsSchemas + ReferencePrefixOutput + inflector.Camelize(name)
 }
