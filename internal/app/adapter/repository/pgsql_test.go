@@ -114,6 +114,7 @@ func TestSQLRepository_GetEntities(t *testing.T) {
 			r := &repository.SQLRepository{
 				DB: tt.fields.DB(),
 			}
+			defer tt.clean()
 			got, err := r.GetEntities()
 			td.Cmp(t, err, tt.error)
 			td.Cmp(t, got, tt.want)
