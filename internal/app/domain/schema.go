@@ -8,6 +8,6 @@ const (
 type Schema struct {
 	Description string              `json:"description" yaml:"description"`
 	Type        string              `json:"type" yaml:"type"`
-	Required    []string            `json:"required" yaml:"required"`
+	Required    []string            `json:"required,omitempty" yaml:"required,omitempty"`
 	Properties  map[string]Property `json:"properties" yaml:"properties"`
 }
