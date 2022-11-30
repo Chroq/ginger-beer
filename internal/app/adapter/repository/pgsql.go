@@ -6,7 +6,8 @@ import (
 	"ginger-beer/internal/app/adapter/factory"
 	"ginger-beer/internal/app/adapter/service"
 	"ginger-beer/internal/app/domain"
-	"strings"
+
+	"github.com/tangzero/inflector"
 )
 
 const (
@@ -19,6 +20,19 @@ const (
 
 type SQLRepository struct {
 	DB *sql.DB
+}
+
+func (r *SQLRepository) GetEntities() ([]string, error) {
+	pgTables, err := r.getTableNames()
+	if err != nil {
+		return nil, err
+	}
+	entities := make([]string, len(pgTables))
+	for i := range pgTables {
+		entities[i] = inflector.Singularize(pgTables[i].Name)
+	}
+
+	return entities, nil
 }
 
 func (r *SQLRepository) GetComponent() (*domain.Component, error) {
@@ -38,7 +52,7 @@ func (r *SQLRepository) GetComponent() (*domain.Component, error) {
 		if err != nil {
 			return nil, err
 		}
-		name := strings.ToUpper(tables[i].Name[:1]) + tables[i].Name[1:]
+		name := inflector.Camelize(tables[i].Name)
 		component.Schema[name] = *schema
 	}
 
