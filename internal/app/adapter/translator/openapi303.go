@@ -63,7 +63,7 @@ const (
 	SQLTypeXml              = "xml"
 )
 
-func SQLToOpenAPIScalarTypes(t string) (string, error) {
+func PgSQLToOpenAPITypes(t string) (string, error) {
 	switch t {
 	case SQLTypeBigint:
 		return OpenAPITypeInteger, nil

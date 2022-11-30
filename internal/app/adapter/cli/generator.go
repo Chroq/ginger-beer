@@ -41,7 +41,7 @@ func NewGenerator() (*Generator, error) {
 // Generate creates a new contract
 func (g *Generator) Generate() error {
 	contractUseCase := usecase.ContractUseCase{
-		ComponentRepository: g.SQLRepository,
+		ContractRepository: g.SQLRepository,
 	}
 	if contract, err := contractUseCase.BuildContract(); err == nil {
 		if g.Config.Format == service.PermittedFormatJSON {

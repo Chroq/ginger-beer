@@ -64,7 +64,7 @@ func TestSqlRepository_GetComponents(t *testing.T) {
 			defer r.DB.Close()
 			defer tt.clean()
 
-			got, err := r.GetComponent()
+			got, err := r.GetFields()
 			td.Cmp(t, err, tt.err)
 			td.Cmp(t, got, tt.want)
 		})

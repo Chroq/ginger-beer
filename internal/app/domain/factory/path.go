@@ -2,22 +2,23 @@ package factory
 
 import (
 	"ginger-beer/internal/app/domain"
+	"ginger-beer/internal/app/domain/valueobject"
 	"net/http"
 
 	"github.com/tangzero/inflector"
 )
 
-func BuildPathsByEntities(entities, verbs []string) map[string]map[string]domain.Path {
+func BuildPathsByEntities(entities map[string][]*valueobject.Field, verbs []string) map[string]map[string]domain.Path {
 	paths := make(map[string]map[string]domain.Path, len(entities))
-	for i := range entities {
-		newURI := "/" + inflector.Pluralize(inflector.Dasherize(entities[i]))
+	for entity := range entities {
+		newURI := "/" + inflector.Pluralize(inflector.Dasherize(entity))
 		paths[newURI] = make(map[string]domain.Path, len(verbs))
 		for j := range verbs {
-			outputSchemaReference := domain.GetOutputSchemaReference(entities[i])
+			outputSchemaReference := domain.GetOutputSchemaReference(entity)
 			paths[newURI][verbs[j]] = domain.Path{
-				OperationID: verbs[j] + inflector.Camelize(entities[i]),
+				OperationID: verbs[j] + inflector.Camelize(entity),
 				Tags: []string{
-					entities[i],
+					entity,
 				},
 				Parameters: []domain.Parameter{
 					{

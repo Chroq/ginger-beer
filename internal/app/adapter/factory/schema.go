@@ -22,7 +22,7 @@ func BuildSchemaByPgTable(table service.PgTable) (*domain.Schema, error) {
 func BuildPropertiesByPgTable(table service.PgTable) (map[string]domain.Property, error) {
 	properties := make(map[string]domain.Property, len(table.Fields))
 	for i := range table.Fields {
-		openAPIType, err := translator.SQLToOpenAPIScalarTypes(table.Fields[i].Type)
+		openAPIType, err := translator.PgSQLToOpenAPITypes(table.Fields[i].Type)
 		if err != nil {
 			return nil, err
 		}

@@ -346,7 +346,7 @@ func TestSQLToOpenAPIScalarTypes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			openAPIType, err := SQLToOpenAPIScalarTypes(tt.args.sqlType)
+			openAPIType, err := PgSQLToOpenAPITypes(tt.args.sqlType)
 			td.Cmp(t, err, tt.err)
 			td.Cmp(t, openAPIType, tt.want)
 		})

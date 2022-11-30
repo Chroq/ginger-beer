@@ -1,8 +1,9 @@
 package repository
 
-import "ginger-beer/internal/app/domain"
+import (
+	"ginger-beer/internal/app/domain/valueobject"
+)
 
-type IComponentRepository interface {
-	GetComponent() (*domain.Component, error)
-	GetEntities() ([]string, error)
+type IContractRepository interface {
+	GetEntities() (map[string][]*valueobject.Field, error)
 }
