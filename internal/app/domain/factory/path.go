@@ -21,7 +21,7 @@ func BuildPathsByEntities(entities, verbs []string) map[string]map[string]domain
 				},
 				Parameters: []domain.Parameter{
 					{
-						Reference: "#/components/parameters/",
+						Reference: domain.BaseReferenceComponentsParameter,
 					},
 				},
 				Responses: map[int]domain.Response{
