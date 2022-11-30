@@ -5,6 +5,7 @@ import "github.com/tangzero/inflector"
 const (
 	BaseReferenceComponentsSchemas = "#/components/schemas/"
 	ReferencePrefixOutput          = "output."
+	ReferencePrefixInput           = "input."
 	SchemaTypeObject               = "object"
 )
 

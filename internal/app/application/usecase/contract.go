@@ -4,6 +4,8 @@ import (
 	"ginger-beer/internal/app/domain"
 	"ginger-beer/internal/app/domain/factory"
 	"ginger-beer/internal/app/domain/repository"
+
+	"github.com/tangzero/inflector"
 )
 
 type ContractUseCase struct {
@@ -18,7 +20,10 @@ func (u *ContractUseCase) BuildContract() (*domain.Contract, error) {
 
 	schemas := make(map[string]domain.Schema, len(entities))
 	for entity := range entities {
-		schemas[entity] = factory.BuildSchemaByEntity(entities[entity])
+		outputEntity := domain.ReferencePrefixOutput + inflector.Camelize(entity)
+		schemas[outputEntity] = factory.BuildSchemaByEntity(entities[entity])
+		inputEntity := domain.ReferencePrefixInput + inflector.Camelize(entity)
+		schemas[inputEntity] = factory.BuildSchemaByEntity(entities[entity])
 	}
 
 	return &domain.Contract{
