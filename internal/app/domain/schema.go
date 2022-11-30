@@ -1,13 +1,15 @@
 package domain
 
 const (
-	SchemaTypeObject = "object"
+	BaseReferenceComponentsSchemas = "#/components/schemas/"
+	SchemaTypeObject               = "object"
 )
 
 // Schema is the structure that represents the schema section of an OpenAPI 3 contract
 type Schema struct {
-	Description string              `json:"description" yaml:"description"`
-	Type        string              `json:"type" yaml:"type"`
+	Reference   string              `json:"$ref,omitempty" yaml:"$ref,omitempty"`
+	Description string              `json:"description,omitempty" yaml:"description,omitempty"`
+	Type        string              `json:"type,omitempty" yaml:"type,omitempty"`
 	Required    []string            `json:"required,omitempty" yaml:"required,omitempty"`
-	Properties  map[string]Property `json:"properties" yaml:"properties"`
+	Properties  map[string]Property `json:"properties,omitempty" yaml:"properties,omitempty"`
 }
