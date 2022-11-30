@@ -6,6 +6,7 @@ import (
 	"ginger-beer/internal/app/adapter/factory"
 	"ginger-beer/internal/app/adapter/service"
 	"ginger-beer/internal/app/domain"
+	"strings"
 )
 
 const (
@@ -37,7 +38,8 @@ func (r *SQLRepository) GetComponent() (*domain.Component, error) {
 		if err != nil {
 			return nil, err
 		}
-		component.Schema[tables[i].Name] = *schema
+		name := strings.ToUpper(tables[i].Name[:1]) + tables[i].Name[1:]
+		component.Schema[name] = *schema
 	}
 
 	return &component, nil
