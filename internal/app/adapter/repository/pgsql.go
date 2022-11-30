@@ -8,6 +8,14 @@ import (
 	"ginger-beer/internal/app/domain"
 )
 
+const (
+	PgQueryTableNames = `
+		select table_name 
+		from information_schema.tables
+		where table_schema != 'pg_catalog' and table_schema != 'information_schema'
+		`
+)
+
 type SQLRepository struct {
 	DB *sql.DB
 }
@@ -25,7 +33,7 @@ func (r *SQLRepository) GetComponent() (*domain.Component, error) {
 		if err != nil {
 			return nil, nil
 		}
-		schema, err := factory.BuildSchemaBySQLTable(tables[i])
+		schema, err := factory.BuildSchemaByPgTable(tables[i])
 		if err != nil {
 			return nil, err
 		}
@@ -35,14 +43,10 @@ func (r *SQLRepository) GetComponent() (*domain.Component, error) {
 	return &component, nil
 }
 
-func (r *SQLRepository) getTableNames() ([]service.SQLTable, error) {
-	var Tables []service.SQLTable
+func (r *SQLRepository) getTableNames() ([]service.PgTable, error) {
+	var Tables []service.PgTable
 
-	query, err := r.DB.Query(`
-		select table_name 
-		from information_schema.tables
-		where table_schema != 'pg_catalog' and table_schema != 'information_schema'
-		`)
+	query, err := r.DB.Query(PgQueryTableNames)
 	if err != nil {
 		return Tables, err
 	}
@@ -54,7 +58,7 @@ func (r *SQLRepository) getTableNames() ([]service.SQLTable, error) {
 	}(query)
 
 	for query.Next() {
-		var tableName service.SQLTable
+		var tableName service.PgTable
 		if err := query.Scan(&tableName.Name); err != nil {
 			return Tables, err
 		}
@@ -67,8 +71,8 @@ func (r *SQLRepository) getTableNames() ([]service.SQLTable, error) {
 	return Tables, nil
 }
 
-func (r *SQLRepository) getFields(tableName string) ([]service.SQLField, error) {
-	var fields []service.SQLField
+func (r *SQLRepository) getFields(tableName string) ([]service.PgField, error) {
+	var fields []service.PgField
 
 	queryString := fmt.Sprintf(`
 			SELECT column_name, data_type, character_maximum_length
@@ -87,7 +91,7 @@ func (r *SQLRepository) getFields(tableName string) ([]service.SQLField, error) 
 	}(query)
 
 	for query.Next() {
-		var field service.SQLField
+		var field service.PgField
 		if err := query.Scan(&field.Name, &field.Type, &field.Size); err != nil {
 			return fields, err
 		}

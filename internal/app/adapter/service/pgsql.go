@@ -1,11 +1,11 @@
 package service
 
-type SQLTable struct {
+type PgTable struct {
 	Name   string
-	Fields []SQLField
+	Fields []PgField
 }
 
-type SQLField struct {
+type PgField struct {
 	Size *int
 	Name string
 	Type string

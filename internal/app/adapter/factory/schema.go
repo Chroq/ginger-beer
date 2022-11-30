@@ -6,8 +6,8 @@ import (
 	"ginger-beer/internal/app/domain"
 )
 
-func BuildSchemaBySQLTable(table service.SQLTable) (*domain.Schema, error) {
-	properties, err := BuildPropertiesBySQLTable(table)
+func BuildSchemaByPgTable(table service.PgTable) (*domain.Schema, error) {
+	properties, err := BuildPropertiesByPgTable(table)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func BuildSchemaBySQLTable(table service.SQLTable) (*domain.Schema, error) {
 	}, nil
 }
 
-func BuildPropertiesBySQLTable(table service.SQLTable) (map[string]domain.Property, error) {
+func BuildPropertiesByPgTable(table service.PgTable) (map[string]domain.Property, error) {
 	properties := make(map[string]domain.Property, len(table.Fields))
 	for i := range table.Fields {
 		openAPIType, err := translator.SQLToOpenAPIScalarTypes(table.Fields[i].Type)
