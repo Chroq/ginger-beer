@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"ginger-beer/internal/app/domain"
+	"ginger-beer/internal/app/domain/factory"
 	"ginger-beer/internal/app/domain/repository"
 )
 
@@ -15,8 +16,19 @@ func (u *ContractUseCase) BuildContract() (*domain.Contract, error) {
 		return nil, err
 	}
 
+	entities, err := u.ComponentRepository.GetEntities()
+	if err != nil {
+		return nil, err
+	}
+
 	return &domain.Contract{
 		OpenAPI:   domain.DefaultOpenAPIVersion,
 		Component: *component,
+		Paths: factory.BuildPathsByEntities(entities, []string{
+			domain.OperationGet,
+			domain.OperationPost,
+			domain.OperationPut,
+			domain.OperationDelete,
+		}),
 	}, nil
 }
