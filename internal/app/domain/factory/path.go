@@ -26,6 +26,7 @@ func BuildPathsByEntities(entities, verbs []string) map[string]map[string]domain
 				},
 				Responses: map[int]domain.Response{
 					http.StatusOK: {
+						Description: domain.Default200Description,
 						Content: map[string]domain.Content{
 							domain.ContentTypeJSON: {
 								Schema: domain.Schema{

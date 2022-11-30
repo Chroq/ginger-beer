@@ -1,7 +1,8 @@
 package domain
 
 const (
-	ContentTypeJSON = "application/json"
+	ContentTypeJSON       = "application/json"
+	Default200Description = "The request has succeeded"
 )
 
 type Content struct {
