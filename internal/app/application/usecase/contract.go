@@ -22,6 +22,9 @@ func (u *ContractUseCase) BuildContract() (*domain.Contract, error) {
 	}
 
 	return &domain.Contract{
+		Servers: []domain.Server{
+			domain.GetDefaultServer(),
+		},
 		OpenAPI:   domain.DefaultOpenAPIVersion,
 		Component: *component,
 		Paths: factory.BuildPathsByEntities(entities, []string{
