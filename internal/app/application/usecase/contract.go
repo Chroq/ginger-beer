@@ -36,7 +36,7 @@ func (u *ContractUseCase) BuildContract() (*domain.Contract, error) {
 		Component: domain.Component{
 			Schema: schemas,
 		},
-		Paths: BuildPathsByEntities(entities, []string{
+		Paths: buildPathsByEntities(entities, []string{
 			domain.OperationGet,
 			domain.OperationIndex,
 			domain.OperationPost,
@@ -46,7 +46,7 @@ func (u *ContractUseCase) BuildContract() (*domain.Contract, error) {
 	}, nil
 }
 
-func BuildPathsByEntities(entities map[string][]*valueobject.Field, verbs []string) map[string]map[string]domain.Path {
+func buildPathsByEntities(entities map[string][]*valueobject.Field, verbs []string) map[string]map[string]domain.Path {
 	paths := make(map[string]map[string]domain.Path, len(entities))
 	for entity := range entities {
 		globalURI := getBaseURI(entity)
@@ -59,13 +59,17 @@ func BuildPathsByEntities(entities map[string][]*valueobject.Field, verbs []stri
 		paths[unitaryURI] = make(map[string]domain.Path, NumberOfUnitaryVerbs)
 		for j := range verbs {
 			outputSchemaReference := domain.GetOutputSchemaReference(entity)
+
 			verb := verbs[j]
+			targetURI := globalVerbs[verb]
+			operationID := verb + inflector.Camelize(entity)
 			if verb == domain.OperationIndex {
 				verb = domain.OperationGet
+				operationID = domain.OperationGet + inflector.Camelize(inflector.Pluralize(entity))
 			}
 
-			paths[globalVerbs[verb]][verb] = domain.Path{
-				OperationID: verb + inflector.Camelize(entity),
+			paths[targetURI][verb] = domain.Path{
+				OperationID: operationID,
 				Tags: []string{
 					entity,
 				},
@@ -95,6 +99,17 @@ func getResponseByVerb(verb, outputSchemaReference string) domain.Response {
 	case domain.OperationDelete:
 		response = domain.Response{
 			Description: domain.Default204Description,
+		}
+	case domain.OperationPost:
+		response = domain.Response{
+			Description: domain.Defautl201Description,
+			Content: map[string]domain.Content{
+				domain.ContentTypeJSON: {
+					Schema: domain.Schema{
+						Reference: outputSchemaReference,
+					},
+				},
+			},
 		}
 	case domain.OperationIndex:
 		response = domain.Response{
